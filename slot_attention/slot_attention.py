@@ -35,8 +35,8 @@ class SlotAttention(nn.Module):
         n_s = num_slots if num_slots is not None else self.num_slots
         
         mu = self.slots_mu.expand(b, n_s, -1)
-        sigma = self.slots_sigma.expand(b, n_s, -1)
-        slots = torch.normal(mu, sigma)
+        sigma = self.slots_sigma.expand(b, n_s, -1).exp()
+        slots = mu + sigma * torch.randn_like(sigma)
 
         inputs = self.norm_input(inputs)        
         k, v = self.to_k(inputs), self.to_v(inputs)
